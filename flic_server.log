@@ -1,0 +1,9 @@
+Available HCI devices found:
+hci0
+
+Trying hci0
+hci0 is busy, shutting down and retrying...
+Successfully bound HCI socket
+Flic server is now up and running!
+Initialization of Bluetooth controller done!
+Accepted new client
