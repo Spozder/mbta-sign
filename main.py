@@ -357,6 +357,8 @@ def on_button_press_creator(state, update_event):
         print("Button Pressed!")
         if click_type in button_handling_dict:
             button_handling_dict[click_type](state, update_event)
+        else:
+            print("Unknown click type: {}".format(click_type))
     return on_button_press
 
 
@@ -395,6 +397,7 @@ mbta_state_update_event.clear()
 
 button_state = ButtonState()
 button_state_update_event = threading.Event()
+button_state_update_event.clear()
 
 button_client = fliclib.FlicClient("localhost")
 button_client.get_info(got_flic_server_info_factory(
