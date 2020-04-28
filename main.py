@@ -189,7 +189,14 @@ def pred_stream(state, stop_id, direction_id, kill_event, state_update_event):
     state_lock = state.get_lock()
     stream_iterator = pred_stream_r.iter_lines(decode_unicode=True)
     while not kill_event.is_set():
-        line = next(stream_iterator)
+        try:
+            line = next(stream_iterator)
+        except:
+            print("Connection broken, recreating")
+            pred_stream_r = requests.get(API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
+                stop_id, direction_id), headers=headers, stream=True)
+            stream_iterator = pred_stream_r.iter_lines(decode_unicode=True)
+            continue
         # filter out keep-alive new lines
         if line:
             if event_type_line:
