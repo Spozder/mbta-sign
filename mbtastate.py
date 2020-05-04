@@ -5,7 +5,7 @@ from datetime import datetime
 from dateutil.tz import tzutc
 
 UPDATE_KEY = "update"
-DEBUG = True
+DEBUG = False
 
 
 def parse_line(l):

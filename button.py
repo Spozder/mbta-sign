@@ -6,6 +6,8 @@ from redislite import Redis
 
 # Button Stuff
 
+DEBUG = False
+
 
 def on_single_click(state):
     state.single_click()
@@ -37,7 +39,8 @@ button_handling_dict = {
 
 def on_button_press_creator(state):
     def on_button_press(channel, click_type, was_queued, time_diff):
-        print("Button Pressed!")
+        if DEBUG:
+            print("Button Pressed!")
         if click_type in button_handling_dict:
             button_handling_dict[click_type](state)
         else:

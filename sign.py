@@ -47,8 +47,7 @@ class Sign:
         self.font.LoadFont(
             "/home/pi/mbta-sign/rpi-rgb-led-matrix/fonts/5x7.bdf")
 
-        self._r = Redis(host='127.0.0.1', port='6379',
-                        charset="utf-8", decode_responses=True)
+        self._r = r
         self._button_state = ButtonState(self._r)
         self._mbta_state = MBTAState(self._r)
 
@@ -67,7 +66,8 @@ class Sign:
         }
 
     def set_text(self, line1, line2, color):
-        print("Setting Text: {}, {}".format(line1, line2))
+        if DEBUG:
+            print("Setting Text: {}, {}".format(line1, line2))
         self.canvas.Clear()
         graphics.DrawText(self.canvas, self.font, 1, 7, color, line1)
         graphics.DrawText(self.canvas, self.font, 1, 15, color, line2)
@@ -86,7 +86,8 @@ class Sign:
     def handle_next_update(self):
         m = self._pubsub.get_message(timeout=0.1)
         if m:
-            print(m)
+            if DEBUG:
+                print(m)
             if m['data'] == BUTTON_KEY or m['data'] == self.get_button_state_string() or self._button_state.get_held():
                 if DEBUG:
                     print("Update Occuring")
@@ -104,16 +105,14 @@ class Sign:
                         line1 = predictions[0].to_short_string(now)
                     if len(predictions) > 1:
                         line2 = predictions[1].to_short_string(now)
-                if DEBUG:
-                    print("Setting line 1: ", line1)
-                    print("Setting line 2: ", line2)
                 self.set_text(line1, line2, color.value["sign_color"])
 
     def unsubscribe(self):
         self._pubsub.unsubscribe()
 
 
-sign = Sign(Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True))
+sign = Sign(Redis(host='127.0.0.1', port='6379',
+                  charset="utf-8", decode_responses=True))
 
 try:
     while True:
