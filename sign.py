@@ -48,8 +48,10 @@ class Sign:
             "/home/pi/mbta-sign/rpi-rgb-led-matrix/fonts/5x7.bdf")
 
         self._r = r
-        self._button_state = ButtonState(self._r)
-        self._mbta_state = MBTAState(self._r)
+        self._button_state = ButtonState(
+            Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True))
+        self._mbta_state = MBTAState(
+            Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True))
 
         # Subscribe to channel
         self._pubsub = self._r.pubsub()
@@ -85,6 +87,7 @@ class Sign:
     def handle_next_update(self):
         m = self._pubsub.get_message(timeout=0.1)
         if m:
+            print(m)
             if m == BUTTON_KEY or m == self.get_button_state_string() or self._button_state.get_held():
                 if DEBUG:
                     print("Update Occuring")
