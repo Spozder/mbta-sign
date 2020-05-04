@@ -81,7 +81,7 @@ class Sign:
     def get_button_state_string(self):
         color, direction = self.get_button_state_tuple()
         # TODO: Use factored-out version
-        return color["mbta_string"] + direction
+        return color.value["mbta_string"] + direction
 
     def handle_next_update(self):
         m = self._pubsub.get_message(timeout=0.1)
