@@ -5,8 +5,8 @@ from datetime import datetime
 import logging
 from enum import Enum
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
-from mbta import MBTAState
-from button import ButtonState
+from mbtastate import MBTAState
+from buttonstate import ButtonState
 from redislite import Redis
 UPDATE_KEY = "update"
 BUTTON_KEY = "button"
