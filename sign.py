@@ -104,7 +104,10 @@ class Sign:
                         line1 = predictions[0].to_short_string(now)
                     if len(predictions) > 1:
                         line2 = predictions[1].to_short_string(now)
-                sign.set_text(line1, line2, color.value["sign_color"])
+                if DEBUG:
+                    print("Setting line 1: ", line1)
+                    print("Setting line 2: ", line2)
+                self.set_text(line1, line2, color.value["sign_color"])
 
     def unsubscribe(self):
         self._pubsub.unsubscribe()
