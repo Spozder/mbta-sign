@@ -16,10 +16,10 @@ class ButtonState:
 
     def double_click(self):
         s = self._r.getbit(BUTTON_KEY, DOUBLE_OFFSET)
-        self._r.setbit(BUTTON_KEY, SINGLE_OFFSET, not s)
+        self._r.setbit(BUTTON_KEY, DOUBLE_OFFSET, not s)
 
     def hold(self):
-        self._r.setbit(BUTTON_KEY, SINGLE_OFFSET, True)
+        self._r.setbit(BUTTON_KEY, HOLD_OFFSET, True)
 
     def release(self):
         s = self._r.getbit(BUTTON_KEY, HOLD_OFFSET)
