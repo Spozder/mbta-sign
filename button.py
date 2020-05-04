@@ -29,11 +29,16 @@ def on_up(state):
         state.flag_update()
 
 
+def no_op(state):
+    pass
+
+
 button_handling_dict = {
     ClickType.ButtonSingleClick: on_single_click,
     ClickType.ButtonDoubleClick: on_double_click,
     ClickType.ButtonHold: on_hold,
-    ClickType.ButtonUp: on_up
+    ClickType.ButtonUp: on_up,
+    ClickType.ButtonDown: no_op
 }
 
 
