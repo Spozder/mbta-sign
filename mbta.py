@@ -52,7 +52,8 @@ class MBTAEvent:
 
 def pred_stream(stop_id, direction_id, kill_event):
     state = MBTAState(
-        Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True, serverconfig={'port': '8002'}))
+        Redis(host='127.0.0.1', port='6379',
+              charset="utf-8", decode_responses=True))
     pred_stream_r = requests.get(API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
         stop_id, direction_id), headers=headers, stream=True)
     event_type_line = True

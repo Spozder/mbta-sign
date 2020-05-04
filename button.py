@@ -64,7 +64,8 @@ def got_flic_server_info_factory(state):
 
 
 button_state = ButtonState(
-    Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True, serverconfig={'port': '8002'}))
+    Redis(host='127.0.0.1', port='6379',
+          charset="utf-8", decode_responses=True))
 button_client = fliclib.FlicClient("localhost")
 button_client.get_info(got_flic_server_info_factory(button_state))
 

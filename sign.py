@@ -47,12 +47,10 @@ class Sign:
         self.font.LoadFont(
             "/home/pi/mbta-sign/rpi-rgb-led-matrix/fonts/5x7.bdf")
 
-        self._r = Redis('/tmp/mbta.db', charset="utf-8",
-                        decode_responses=True, serverconfig={'port': '8002'})
-        self._button_state = ButtonState(Redis(
-            '/tmp/mbta.db', charset="utf-8", decode_responses=True, serverconfig={'slaveof': '127.0.0.1 8002'}))
-        self._mbta_state = MBTAState(Redis(
-            '/tmp/mbta.db', charset="utf-8", decode_responses=True, serverconfig={'slaveof': '127.0.0.1 8002'}))
+        self._r = Redis(host='127.0.0.1', port='6379',
+                        charset="utf-8", decode_responses=True)
+        self._button_state = ButtonState(self._r)
+        self._mbta_state = MBTAState(self._r)
 
         # Subscribe to channel
         self._pubsub = self._r.pubsub()
