@@ -33,7 +33,7 @@ def print_state(state, kill_event, state_update_event):
 
 
 class Sign:
-    def __init__(self, r=Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True)):
+    def __init__(self, r):
         options = RGBMatrixOptions()
 
         # Setup sign options
@@ -108,7 +108,7 @@ class Sign:
         self._pubsub.unsubscribe()
 
 
-sign = Sign()
+sign = Sign(Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True))
 
 try:
     while True:

@@ -1,6 +1,5 @@
 from prediction import Prediction, create_route_list_name
 
-from redislite import Redis
 from json import loads
 from datetime import datetime
 from dateutil.tz import tzutc
@@ -14,7 +13,7 @@ def parse_line(l):
 
 
 class MBTAState:
-    def __init__(self, r=Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True)):
+    def __init__(self, r):
         self._r = r
 
     def apply_reset(self, event):

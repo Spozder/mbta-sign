@@ -1,5 +1,3 @@
-from redislite import Redis
-
 BUTTON_KEY = "button"
 SINGLE_OFFSET = 0
 DOUBLE_OFFSET = 1
@@ -9,7 +7,7 @@ UPDATE_KEY = "update"
 
 
 class ButtonState:
-    def __init__(self, r=Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True)):
+    def __init__(self, r):
         self._r = r
 
     def single_click(self):

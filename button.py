@@ -2,6 +2,8 @@ from buttonstate import ButtonState
 from fliclib import ClickType
 import fliclib
 
+from redislite import Redis
+
 # Button Stuff
 
 
@@ -61,7 +63,8 @@ def got_flic_server_info_factory(state):
     return got_flic_server_info
 
 
-button_state = ButtonState()
+button_state = ButtonState(
+    Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True))
 button_client = fliclib.FlicClient("localhost")
 button_client.get_info(got_flic_server_info_factory(button_state))
 

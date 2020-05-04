@@ -5,6 +5,7 @@ import threading
 import time
 import sys
 
+from redislite import Redis
 API_KEY = "9dd6a96deb434cca901b48f3a09b9479"
 API_BASE = "https://api-v3.mbta.com"
 
@@ -50,7 +51,8 @@ class MBTAEvent:
 
 
 def pred_stream(stop_id, direction_id, kill_event):
-    state = MBTAState()
+    state = MBTAState(
+        Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True))
     pred_stream_r = requests.get(API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
         stop_id, direction_id), headers=headers, stream=True)
     event_type_line = True
