@@ -87,7 +87,7 @@ class Sign:
         m = self._pubsub.get_message(timeout=0.1)
         if m:
             print(m)
-            if m == BUTTON_KEY or m == self.get_button_state_string() or self._button_state.get_held():
+            if m['data'] == BUTTON_KEY or m['data'] == self.get_button_state_string() or self._button_state.get_held():
                 if DEBUG:
                     print("Update Occuring")
                 now = datetime.now(tzutc())
