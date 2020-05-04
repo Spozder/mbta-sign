@@ -33,7 +33,7 @@ def print_state(state, kill_event, state_update_event):
 
 
 class Sign:
-    def __init__(self):
+    def __init__(self, r=Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True)):
         options = RGBMatrixOptions()
 
         # Setup sign options
@@ -47,7 +47,7 @@ class Sign:
         self.font.LoadFont(
             "/home/pi/mbta-sign/rpi-rgb-led-matrix/fonts/5x7.bdf")
 
-        self._r = Redis('/tmp/mbta.db', charset="utf-8", decode_responses=True)
+        self._r = r
         self._button_state = ButtonState(self._r)
         self._mbta_state = MBTAState(self._r)
 
