@@ -94,25 +94,25 @@ class Sign:
         if m:
             if DEBUG:
                 print(m)
-            with self._mbta_state.acquire_lock():
-                if m['data'] == BUTTON_KEY or m['data'] == self.get_button_state_string() or self._button_state.get_held():
-                    if DEBUG:
-                        print("Update Occuring")
-                    now = datetime.now(tzutc())
-                    color, direction = self.get_button_state_tuple()
-                    line1 = ""
-                    line2 = ""
-                    if self._button_state.get_held():
-                        line1 = "I love"
-                        line2 = "Ranch ♡"
-                    else:
+            if m['data'] == BUTTON_KEY or m['data'] == self.get_button_state_string() or self._button_state.get_held():
+                if DEBUG:
+                    print("Update Occuring")
+                now = datetime.now(tzutc())
+                color, direction = self.get_button_state_tuple()
+                line1 = ""
+                line2 = ""
+                if self._button_state.get_held():
+                    line1 = "I love"
+                    line2 = "Ranch ♡"
+                else:
+                    with self._mbta_state.acquire_lock():
                         predictions = self._mbta_state.get_next_two_predictions(
                             color.value["mbta_string"], direction, now)
-                        if len(predictions) > 0:
-                            line1 = predictions[0].to_short_string(now)
-                        if len(predictions) > 1:
-                            line2 = predictions[1].to_short_string(now)
-                    self.set_text(line1, line2, color.value["sign_color"])
+                    if len(predictions) > 0:
+                        line1 = predictions[0].to_short_string(now)
+                    if len(predictions) > 1:
+                        line2 = predictions[1].to_short_string(now)
+                self.set_text(line1, line2, color.value["sign_color"])
 
     def unsubscribe(self):
         self._pubsub.unsubscribe()
