@@ -81,7 +81,8 @@ def pred_stream(stop_id, direction_id, kill_event):
             else:
                 # handle event-data line
                 current_event.set_data(line)
-                current_event.get_type()(state, current_event)  # Apply event
+                with state.acquire_lock():
+                    current_event.get_type()(state, current_event)  # Apply event
                 # state_update_event.set()
                 current_event.clear()
                 event_type_line = True

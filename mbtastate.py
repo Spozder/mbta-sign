@@ -7,6 +7,8 @@ from dateutil.tz import tzutc
 UPDATE_KEY = "update"
 DEBUG = False
 
+MBTA_LOCK_KEY = "mbta"
+
 
 def parse_line(l):
     return loads(l[l.index(" ")+1:])
@@ -108,3 +110,6 @@ class MBTAState:
                 preds
             )
         )[:2]
+
+    def acquire_lock(self):
+        return self._r.lock(MBTA_LOCK_KEY)
