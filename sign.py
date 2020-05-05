@@ -55,6 +55,9 @@ class Sign:
         self._pubsub = self._r.pubsub()
         self._pubsub.subscribe(UPDATE_KEY)
 
+        self._line1 = "Now booting up"
+        self._line2 = "Pls hold"
+
     class Color(Enum):
         ORANGE = {
             "mbta_string": "Orange",
@@ -68,10 +71,13 @@ class Sign:
     def set_text(self, line1, line2, color):
         if DEBUG:
             print("Setting Text: {}, {}".format(line1, line2))
-        self.canvas.Clear()
-        graphics.DrawText(self.canvas, self.font, 1, 7, color, line1)
-        graphics.DrawText(self.canvas, self.font, 1, 15, color, line2)
-        self.canvas = self.matrix.SwapOnVSync(self.canvas)
+        if line1 != self._line1 or line2 != self._line2:
+            self.canvas.Clear()
+            graphics.DrawText(self.canvas, self.font, 1, 7, color, line1)
+            graphics.DrawText(self.canvas, self.font, 1, 15, color, line2)
+            self.canvas = self.matrix.SwapOnVSync(self.canvas)
+            self._line1 = line1
+            self._line2 = line2
 
     def get_button_state_tuple(self):
         color = Sign.Color.GREEN if self._button_state.get_single() else Sign.Color.ORANGE
