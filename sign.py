@@ -67,6 +67,10 @@ class Sign:
             "mbta_string": "Green-E",
             "sign_color": graphics.Color(0, 204, 0)
         }
+        RED = {
+            "mbta_string": "Red",
+            "sign_color": graphics.Color(218, 41, 28)
+        }
 
     def set_text(self, line1, line2, color):
         if DEBUG:
@@ -80,7 +84,7 @@ class Sign:
             self._line2 = line2
 
     def get_button_state_tuple(self):
-        color = Sign.Color.GREEN if self._button_state.get_single() else Sign.Color.ORANGE
+        color = Sign.Color(self._button_state.get_single())
         direction = "0" if self._button_state.get_double() else "1"
         return color, direction
 

@@ -91,13 +91,17 @@ def pred_stream(stop_id, direction_id, kill_event):
 kill_event = threading.Event()
 
 orange_north_thread = threading.Thread(
-    target=pred_stream, args=('70013', '1', kill_event))
+    target=pred_stream, args=('70019', '1', kill_event))
 orange_south_thread = threading.Thread(
-    target=pred_stream, args=('70012', '0', kill_event))
+    target=pred_stream, args=('70018', '0', kill_event))
 green_north_thread = threading.Thread(
-    target=pred_stream, args=('70242', '1', kill_event))
+    target=pred_stream, args=('70200', '1', kill_event))
 green_south_thread = threading.Thread(
-    target=pred_stream, args=('70241', '0', kill_event))
+    target=pred_stream, args=('70199', '0', kill_event))
+red_north_thread = threading.Thread(
+    target=pred_stream, args=('70080', '1', kill_event))
+red_south_thread = threading.Thread(
+    target=pred_stream, args=('70079', '0', kill_event))
 
 thread_list = [
     orange_north_thread,
