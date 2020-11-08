@@ -18,15 +18,15 @@ class ButtonState:
 
     def double_click(self):
         s = self._r.get(DOUBLE_KEY)
-        self._r.set(DOUBLE_KEY, not s)
+        self._r.set(DOUBLE_KEY, int(not s))
 
     def hold(self):
-        self._r.set(HOLD_KEY, True)
+        self._r.set(HOLD_KEY, 1)
 
     def release(self):
         s = self._r.get(HOLD_KEY)
         if s:
-            self._r.set(HOLD_KEY, False)
+            self._r.set(HOLD_KEY, 0)
             return True
         return False
 

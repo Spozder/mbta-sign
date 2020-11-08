@@ -51,6 +51,8 @@ class Prediction:
     def to_short_string(self, now=datetime.now(tzutc())):
         if self._route == "Orange":
             destination = "Oak Grove" if self._direction == 1 else "Forest Hills"
+        elif(self._route == "Red"):
+            destination = "Alewife" if self._direction == 1 else "Ashmont/BT"
         else:
             destination = "Lechmere" if self._direction == 1 else "Heath St"
         return "{} {} min".format(
