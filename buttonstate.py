@@ -34,10 +34,10 @@ class ButtonState:
         return int(self._r.get(SINGLE_KEY) or 0)
 
     def get_double(self):
-        return int(self._r.get(DOUBLE_KEY))
+        return int(self._r.get(DOUBLE_KEY) or 0)
 
     def get_held(self):
-        return int(self._r.get(HOLD_KEY))
+        return int(self._r.get(HOLD_KEY) or 0)
 
     def flag_update(self):
         self._r.publish(UPDATE_KEY, "button")

@@ -107,7 +107,9 @@ thread_list = [
     orange_north_thread,
     orange_south_thread,
     green_north_thread,
-    green_south_thread
+    green_south_thread,
+    red_north_thread,
+    red_south_thread
 ]
 for t in thread_list:
     t.start()
