@@ -5,7 +5,7 @@ import threading
 import time
 import sys
 
-from redislite import Redis
+from redis import Redis
 API_KEY = "9dd6a96deb434cca901b48f3a09b9479"
 API_BASE = "https://api-v3.mbta.com"
 

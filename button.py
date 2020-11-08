@@ -2,7 +2,7 @@ from buttonstate import ButtonState
 from fliclib import ClickType
 import fliclib
 
-from redislite import Redis
+from redis import Redis
 
 # Button Stuff
 

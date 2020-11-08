@@ -7,7 +7,7 @@ from enum import Enum
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 from mbtastate import MBTAState
 from buttonstate import ButtonState
-from redislite import Redis
+from redis import Redis
 UPDATE_KEY = "update"
 BUTTON_KEY = "button"
 
@@ -39,7 +39,7 @@ class Sign:
         # Setup sign options
         options.rows = 16
         options.cols = 96
-        options.brightness = 50
+        options.brightness = 20
         options.hardware_mapping = 'regular'
         self.matrix = RGBMatrix(options=options)
         self.canvas = self.matrix.CreateFrameCanvas()
