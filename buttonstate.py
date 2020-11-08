@@ -31,7 +31,7 @@ class ButtonState:
         return False
 
     def get_single(self):
-        return int(self._r.get(SINGLE_KEY))
+        return int(self._r.get(SINGLE_KEY) or 0)
 
     def get_double(self):
         return self._r.get(DOUBLE_KEY)

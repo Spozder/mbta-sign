@@ -39,7 +39,7 @@ class Sign:
         # Setup sign options
         options.rows = 16
         options.cols = 96
-        options.brightness = 20
+        options.brightness = 30
         options.hardware_mapping = 'regular'
         self.matrix = RGBMatrix(options=options)
         self.canvas = self.matrix.CreateFrameCanvas()
@@ -84,7 +84,7 @@ class Sign:
             self._line2 = line2
 
     def get_button_state_tuple(self):
-        color = Sign.Color(self._button_state.get_single())
+        color = list(Sign.Color)[self._button_state.get_single()]
         direction = "0" if self._button_state.get_double() else "1"
         return color, direction
 
