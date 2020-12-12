@@ -70,7 +70,6 @@ while True:
         continue
     # filter out keep-alive new lines
     if line:
-        print("Received: {}".format(line))
         if event_type_line:
             type_str = line.split(" ")[-1]
             # filter out keep-alive events

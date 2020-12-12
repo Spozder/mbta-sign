@@ -31,8 +31,8 @@ class MBTAState:
         json_data = parse_line(event.get_data())
         preds = []
         for pred in json_data:
-            stop_id = pred['relationships']['stop']['data']['id']
-            direction_id = pred['attributes']['direction_id']
+            stop_id = str(pred['relationships']['stop']['data']['id'])
+            direction_id = str(pred['attributes']['direction_id'])
             if [stop_id, direction_id] in PREDICTIONS_TO_WATCH:
                 p = Prediction(
                     pred['id'],
@@ -41,6 +41,9 @@ class MBTAState:
                     pred['attributes']['arrival_time']
                 )
                 preds.append(p)
+            else:
+                if DEBUG:
+                    print("Prediction not reset: {}, {}".format(stop_id, direction_id))
 
         if len(preds) > 0:
             r_l_name = preds[0].get_route_list_name()
@@ -55,8 +58,8 @@ class MBTAState:
 
     def apply_add(self, event):
         pred = parse_line(event.get_data())
-        stop_id = pred['relationships']['stop']['data']['id']
-        direction_id = pred['attributes']['direction_id']
+        stop_id = str(pred['relationships']['stop']['data']['id'])
+        direction_id = str(pred['attributes']['direction_id'])
         if [stop_id, direction_id] in PREDICTIONS_TO_WATCH:
             p = Prediction(
                 pred['id'],
@@ -68,6 +71,9 @@ class MBTAState:
             self.publish_update(p.get_route_list_name())
             if DEBUG:
                 print("Added prediction:", p.to_short_string())
+        else:
+            if DEBUG:
+                print("Prediction not added: {}, {}".format(stop_id, direction_id))
 
     def apply_update(self, event):
         pred = parse_line(event.get_data())
