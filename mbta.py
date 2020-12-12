@@ -53,8 +53,10 @@ direction_ids = set(map(lambda a: a[1], PREDICTIONS_TO_WATCH))
 state = MBTAState(
     Redis(host='127.0.0.1', port='6379',
           charset="utf-8", decode_responses=True))
-pred_stream_r = requests.get(API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
-    ','.join(stop_ids), ','.join(direction_ids)), headers=headers, stream=True)
+pred_url = API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
+    ','.join(stop_ids), ','.join(direction_ids))
+print("Connecting to {}".format(pred_url))
+pred_stream_r = requests.get(pred_url, headers=headers, stream=True)
 event_type_line = True
 current_event = MBTAEvent()
 stream_iterator = pred_stream_r.iter_lines(decode_unicode=True)
@@ -63,12 +65,12 @@ while True:
         line = next(stream_iterator)
     except:
         print("Connection broken, recreating")
-        pred_stream_r = requests.get(API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
-            ','.join(stop_ids), ','.join(direction_ids)), headers=headers, stream=True)
+        pred_stream_r = requests.get(pred_url, headers=headers, stream=True)
         stream_iterator = pred_stream_r.iter_lines(decode_unicode=True)
         continue
     # filter out keep-alive new lines
     if line:
+        print("Received: {}".format(line))
         if event_type_line:
             type_str = line.split(" ")[-1]
             # filter out keep-alive events
