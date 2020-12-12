@@ -1,6 +1,5 @@
 from mbtastate import MBTAState, PREDICTIONS_TO_WATCH
 import requests
-import threading
 
 import time
 import sys
