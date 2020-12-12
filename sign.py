@@ -69,7 +69,7 @@ class Sign:
         }
         RED = {
             "mbta_string": "Red",
-            "sign_color": graphics.Color(218, 41, 28)
+            "sign_color": graphics.Color(255, 41, 28)
         }
 
     def set_text(self, line1, line2, color):

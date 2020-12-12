@@ -17,14 +17,14 @@ class ButtonState:
             self._r.decrby(SINGLE_KEY, MAX_SINGLE)
 
     def double_click(self):
-        s = self._r.get(DOUBLE_KEY)
+        s = int(self._r.get(DOUBLE_KEY) or 0)
         self._r.set(DOUBLE_KEY, int(not s))
 
     def hold(self):
         self._r.set(HOLD_KEY, 1)
 
     def release(self):
-        s = self._r.get(HOLD_KEY)
+        s = int(self._r.get(HOLD_KEY) or 0)
         if s:
             self._r.set(HOLD_KEY, 0)
             return True
