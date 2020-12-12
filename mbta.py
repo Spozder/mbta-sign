@@ -1,4 +1,4 @@
-from mbtastate import MBTAState
+from mbtastate import MBTAState, PREDICTIONS_TO_WATCH
 import requests
 import threading
 
@@ -47,80 +47,42 @@ class MBTAEvent:
     def get_data(self):
         return self._data
 
-# MBTA Thread Stuff
 
+stop_ids = set(map(lambda a: a[0], PREDICTIONS_TO_WATCH))
+direction_ids = set(map(lambda a: a[1], PREDICTIONS_TO_WATCH))
 
-def pred_stream(stop_id, direction_id, kill_event):
-    state = MBTAState(
-        Redis(host='127.0.0.1', port='6379',
-              charset="utf-8", decode_responses=True))
-    pred_stream_r = requests.get(API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
-        stop_id, direction_id), headers=headers, stream=True)
-    event_type_line = True
-    current_event = MBTAEvent()
-    stream_iterator = pred_stream_r.iter_lines(decode_unicode=True)
-    while not kill_event.is_set():
-        try:
-            line = next(stream_iterator)
-        except:
-            print("Connection broken, recreating")
-            pred_stream_r = requests.get(API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
-                stop_id, direction_id), headers=headers, stream=True)
-            stream_iterator = pred_stream_r.iter_lines(decode_unicode=True)
-            continue
-        # filter out keep-alive new lines
-        if line:
-            if event_type_line:
-                type_str = line.split(" ")[-1]
-                # filter out keep-alive events
-                if type_str == 'keep-alive':
-                    continue
-                # handle event-type line
-                current_event.set_type(type_str)
-                event_type_line = False
-            else:
-                # handle event-data line
-                current_event.set_data(line)
-                with state.acquire_lock():
-                    current_event.get_type()(state, current_event)  # Apply event
-                # state_update_event.set()
-                current_event.clear()
-                event_type_line = True
-
-
-kill_event = threading.Event()
-
-orange_north_thread = threading.Thread(
-    target=pred_stream, args=('70019', '1', kill_event))
-orange_south_thread = threading.Thread(
-    target=pred_stream, args=('70018', '0', kill_event))
-green_north_thread = threading.Thread(
-    target=pred_stream, args=('70200', '1', kill_event))
-green_south_thread = threading.Thread(
-    target=pred_stream, args=('70199', '0', kill_event))
-red_north_thread = threading.Thread(
-    target=pred_stream, args=('70080', '1', kill_event))
-red_south_thread = threading.Thread(
-    target=pred_stream, args=('70079', '0', kill_event))
-
-thread_list = [
-    orange_north_thread,
-    orange_south_thread,
-    green_north_thread,
-    green_south_thread,
-    red_north_thread,
-    red_south_thread
-]
-for t in thread_list:
-    t.start()
-
-try:
-    while True:
-        time.sleep(100)
-except KeyboardInterrupt:
-    kill_event.set()
-    for t in thread_list:
-        print("Killing thread {}:".format(t.ident), end=" ")
-        sys.stdout.flush()
-        t.join()
-        print("Done")
+state = MBTAState(
+    Redis(host='127.0.0.1', port='6379',
+          charset="utf-8", decode_responses=True))
+pred_stream_r = requests.get(API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
+    ','.join(stop_ids), ','.join(direction_ids)), headers=headers, stream=True)
+event_type_line = True
+current_event = MBTAEvent()
+stream_iterator = pred_stream_r.iter_lines(decode_unicode=True)
+while True:
+    try:
+        line = next(stream_iterator)
+    except:
+        print("Connection broken, recreating")
+        pred_stream_r = requests.get(API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
+            ','.join(stop_ids), ','.join(direction_ids)), headers=headers, stream=True)
+        stream_iterator = pred_stream_r.iter_lines(decode_unicode=True)
+        continue
+    # filter out keep-alive new lines
+    if line:
+        if event_type_line:
+            type_str = line.split(" ")[-1]
+            # filter out keep-alive events
+            if type_str == 'keep-alive':
+                continue
+            # handle event-type line
+            current_event.set_type(type_str)
+            event_type_line = False
+        else:
+            # handle event-data line
+            current_event.set_data(line)
+            with state.acquire_lock():
+                current_event.get_type()(state, current_event)  # Apply event
+            # state_update_event.set()
+            current_event.clear()
+            event_type_line = True

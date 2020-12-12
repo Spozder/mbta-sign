@@ -83,5 +83,8 @@ class Prediction:
 
     @classmethod
     def from_redis(class_object, r, id):
-        m = r.hgetall(id)
-        return class_object(m[PRED_ID], m[ROUTE_NAME], m[DIRECTION], m[ARRIVAL_TIME])
+        if r.exists(id):
+            m = r.hgetall(id)
+            return class_object(m[PRED_ID], m[ROUTE_NAME], m[DIRECTION], m[ARRIVAL_TIME])
+        else:
+            return None
