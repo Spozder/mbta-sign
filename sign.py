@@ -58,7 +58,7 @@ class Sign:
         self._line1 = ""
         self._line2 = ""
 
-        self.set_text("Now booting up", "Pls hold", Sign.Color.ORANGE)
+        self.set_text("Now booting up", "Pls hold", graphics.Color(102,51,153))
 
     class Color(Enum):
         ORANGE = {
