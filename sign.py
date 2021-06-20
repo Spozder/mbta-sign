@@ -58,7 +58,10 @@ class Sign:
         self._line1 = ""
         self._line2 = ""
 
-        self.set_text("Now booting up", "Pls hold", graphics.Color(102,51,153))
+        purple = graphics.Color(102,51,153)
+        self._color = purple
+
+        self.set_text("Now booting up", "Pls hold", purple)
 
     class Color(Enum):
         ORANGE = {
@@ -84,6 +87,7 @@ class Sign:
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             self._line1 = line1
             self._line2 = line2
+            self._color = color
 
     def get_button_state_tuple(self):
         color = list(Sign.Color)[self._button_state.get_single()]
@@ -96,7 +100,7 @@ class Sign:
         return color.value["mbta_string"] + direction
 
     def handle_next_update(self):
-        m = self._pubsub.get_message(timeout=0.1)
+        m = self._pubsub.get_message(timeout=0.5)
         if m:
             if DEBUG:
                 print(m)
@@ -119,6 +123,8 @@ class Sign:
                     if len(predictions) > 1:
                         line2 = predictions[1].to_short_string(now)
                 self.set_text(line1, line2, color.value["sign_color"])
+        else:
+            self.set_text(self._line1, self._line1, self._color)
 
     def unsubscribe(self):
         self._pubsub.unsubscribe()
