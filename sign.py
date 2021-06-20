@@ -62,6 +62,7 @@ class Sign:
         self._color = purple
 
         self.set_text("Now booting up", "Pls hold", purple)
+        self._initializing = True
 
     class Color(Enum):
         ORANGE = {"mbta_string": "Orange", "sign_color": graphics.Color(237, 139, 0)}
@@ -95,8 +96,9 @@ class Sign:
         if m:
             if DEBUG:
                 print(m)
-            if m["data"] == BUTTON_KEY:
+            if m["data"] == BUTTON_KEY or self._initializing:
                 self._button_state.refresh()
+                self._initializing = False
             if m["data"] == BUTTON_KEY or m["data"] == self.get_button_state_string() or self._button_state.get_held():
                 if DEBUG:
                     print("Update Occuring")
