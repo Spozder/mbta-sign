@@ -124,7 +124,7 @@ class Sign:
                         line2 = predictions[1].to_short_string(now)
                 self.set_text(line1, line2, color.value["sign_color"])
         else:
-            self.set_text(self._line1, self._line1, self._color)
+            self.set_text(self._line1, self._line2, self._color)
 
     def unsubscribe(self):
         self._pubsub.unsubscribe()
