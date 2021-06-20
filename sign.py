@@ -65,9 +65,9 @@ class Sign:
         self._initializing = True
 
     class Color(Enum):
+        RED = {"mbta_string": "Red", "sign_color": graphics.Color(140, 0, 0)}
         ORANGE = {"mbta_string": "Orange", "sign_color": graphics.Color(237, 139, 0)}
         GREEN = {"mbta_string": "Green-E", "sign_color": graphics.Color(0, 204, 0)}
-        RED = {"mbta_string": "Red", "sign_color": graphics.Color(255, 41, 28)}
 
     def set_text(self, line1, line2, color):
         if DEBUG:
@@ -92,7 +92,7 @@ class Sign:
         return color.value["mbta_string"] + direction
 
     def handle_next_update(self):
-        m = self._pubsub.get_message(timeout=0.5)
+        m = self._pubsub.get_message(timeout=1)
         if m:
             if DEBUG:
                 print(m)
@@ -119,8 +119,6 @@ class Sign:
                     if len(predictions) > 1:
                         line2 = predictions[1].to_short_string(now)
                 self.set_text(line1, line2, color.value["sign_color"])
-        else:
-            self.set_text(self._line1, self._line2, self._color)
 
     def unsubscribe(self):
         self._pubsub.unsubscribe()
