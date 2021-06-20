@@ -10,6 +10,9 @@ MAX_SINGLE = 3
 class ButtonState:
     def __init__(self, r):
         self._r = r
+        self._single = 0
+        self._double = 0
+        self._held = 0
 
     def single_click(self):
         s = self._r.incr(SINGLE_KEY)
@@ -31,13 +34,27 @@ class ButtonState:
         return False
 
     def get_single(self):
-        return int(self._r.get(SINGLE_KEY) or 0)
+        return self._single
+
+    def set_single(self, value):
+        self._single = value
 
     def get_double(self):
-        return int(self._r.get(DOUBLE_KEY) or 0)
+        return self._double
+
+    def set_double(self, value):
+        self._double = value
 
     def get_held(self):
-        return int(self._r.get(HOLD_KEY) or 0)
+        return self._held
+
+    def set_held(self, value):
+        self._held = value
 
     def flag_update(self):
         self._r.publish(UPDATE_KEY, "button")
+
+    def refresh(self):
+        self.set_single(int(self._r.get(SINGLE_KEY) or 0))
+        self.set_double(int(self._r.get(DOUBLE_KEY) or 0))
+        self.set_held(int(self._r.get(HOLD_KEY) or 0))

@@ -8,6 +8,7 @@ from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 from mbtastate import MBTAState
 from buttonstate import ButtonState
 from redis import Redis
+
 UPDATE_KEY = "update"
 BUTTON_KEY = "button"
 
@@ -40,12 +41,11 @@ class Sign:
         options.rows = 16
         options.cols = 96
         options.brightness = 30
-        options.hardware_mapping = 'regular'
+        options.hardware_mapping = "regular"
         self.matrix = RGBMatrix(options=options)
         self.canvas = self.matrix.CreateFrameCanvas()
         self.font = graphics.Font()
-        self.font.LoadFont(
-            "/home/pi/mbta-sign/rpi-rgb-led-matrix/fonts/5x7.bdf")
+        self.font.LoadFont("/home/pi/mbta-sign/rpi-rgb-led-matrix/fonts/5x7.bdf")
 
         self._r = r
         self._button_state = ButtonState(self._r)
@@ -58,24 +58,15 @@ class Sign:
         self._line1 = ""
         self._line2 = ""
 
-        purple = graphics.Color(102,51,153)
+        purple = graphics.Color(102, 51, 153)
         self._color = purple
 
         self.set_text("Now booting up", "Pls hold", purple)
 
     class Color(Enum):
-        ORANGE = {
-            "mbta_string": "Orange",
-            "sign_color": graphics.Color(237, 139, 0)
-        }
-        GREEN = {
-            "mbta_string": "Green-E",
-            "sign_color": graphics.Color(0, 204, 0)
-        }
-        RED = {
-            "mbta_string": "Red",
-            "sign_color": graphics.Color(255, 41, 28)
-        }
+        ORANGE = {"mbta_string": "Orange", "sign_color": graphics.Color(237, 139, 0)}
+        GREEN = {"mbta_string": "Green-E", "sign_color": graphics.Color(0, 204, 0)}
+        RED = {"mbta_string": "Red", "sign_color": graphics.Color(255, 41, 28)}
 
     def set_text(self, line1, line2, color):
         if DEBUG:
@@ -104,7 +95,9 @@ class Sign:
         if m:
             if DEBUG:
                 print(m)
-            if m['data'] == BUTTON_KEY or m['data'] == self.get_button_state_string() or self._button_state.get_held():
+            if m["data"] == BUTTON_KEY:
+                self._button_state.refresh()
+            if m["data"] == BUTTON_KEY or m["data"] == self.get_button_state_string() or self._button_state.get_held():
                 if DEBUG:
                     print("Update Occuring")
                 now = datetime.now(tzutc())
@@ -117,7 +110,8 @@ class Sign:
                 else:
                     with self._mbta_state.acquire_lock():
                         predictions = self._mbta_state.get_next_two_predictions(
-                            color.value["mbta_string"], direction, now)
+                            color.value["mbta_string"], direction, now
+                        )
                     if len(predictions) > 0:
                         line1 = predictions[0].to_short_string(now)
                     if len(predictions) > 1:
@@ -130,8 +124,9 @@ class Sign:
         self._pubsub.unsubscribe()
 
 
-sign = Sign(Redis(host='127.0.0.1', port='6379',
-                  charset="utf-8", decode_responses=True))
+sign = Sign(
+    Redis(host="127.0.0.1", port="6379", charset="utf-8", decode_responses=True)
+)
 
 try:
     while True:
