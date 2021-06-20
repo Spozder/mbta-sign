@@ -55,6 +55,9 @@ class Sign:
         self._pubsub = self._r.pubsub()
         self._pubsub.subscribe(UPDATE_KEY)
 
+        self._line1 = ""
+        self._line2 = ""
+
         self.set_text("Now booting up", "Pls hold", Sign.Color.ORANGE)
 
     class Color(Enum):
