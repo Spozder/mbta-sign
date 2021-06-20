@@ -65,7 +65,7 @@ class Sign:
         self._initializing = True
 
     class Color(Enum):
-        RED = {"mbta_string": "Red", "sign_color": graphics.Color(140, 0, 0)}
+        RED = {"mbta_string": "Red", "sign_color": graphics.Color(200, 0, 0)}
         ORANGE = {"mbta_string": "Orange", "sign_color": graphics.Color(237, 139, 0)}
         GREEN = {"mbta_string": "Green-E", "sign_color": graphics.Color(0, 204, 0)}
 
