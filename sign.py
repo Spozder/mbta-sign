@@ -96,10 +96,10 @@ class Sign:
         if m:
             if DEBUG:
                 print(m)
-            if m["data"] == BUTTON_KEY or self._initializing:
+            if m["data"] == BUTTON_KEY:
                 self._button_state.refresh()
+            if self._initializing or m["data"] == BUTTON_KEY or m["data"] == self.get_button_state_string() or self._button_state.get_held():
                 self._initializing = False
-            if m["data"] == BUTTON_KEY or m["data"] == self.get_button_state_string() or self._button_state.get_held():
                 if DEBUG:
                     print("Update Occuring")
                 now = datetime.now(tzutc())
