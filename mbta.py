@@ -5,13 +5,11 @@ import time
 import sys
 
 from redis import Redis
+
 API_KEY = "9dd6a96deb434cca901b48f3a09b9479"
 API_BASE = "https://api-v3.mbta.com"
 
-headers = {
-    "x-api-key": API_KEY,
-    "accept": "text/event-stream"
-}
+headers = {"x-api-key": API_KEY, "accept": "text/event-stream"}
 
 # MBTA Stuff
 
@@ -51,10 +49,11 @@ stop_ids = set(map(lambda a: a[0], PREDICTIONS_TO_WATCH))
 direction_ids = set(map(lambda a: a[1], PREDICTIONS_TO_WATCH))
 
 state = MBTAState(
-    Redis(host='127.0.0.1', port='6379',
-          charset="utf-8", decode_responses=True))
+    Redis(host="127.0.0.1", port="6379", charset="utf-8", decode_responses=True)
+)
 pred_url = API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
-    ','.join(stop_ids), ','.join(direction_ids))
+    ",".join(stop_ids), ",".join(direction_ids)
+)
 print("Connecting to {}".format(pred_url))
 pred_stream_r = requests.get(pred_url, headers=headers, stream=True)
 event_type_line = True
@@ -73,7 +72,7 @@ while True:
         if event_type_line:
             type_str = line.split(" ")[-1]
             # filter out keep-alive events
-            if type_str == 'keep-alive':
+            if type_str == "keep-alive":
                 continue
             # handle event-type line
             current_event.set_type(type_str)
