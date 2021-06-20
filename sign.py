@@ -58,10 +58,7 @@ class Sign:
         self._line1 = ""
         self._line2 = ""
 
-        purple = graphics.Color(102, 51, 153)
-        self._color = purple
-
-        self.set_text("Now booting up", "Pls hold", purple)
+        self.set_text("Now booting up", "Pls hold", graphics.Color(102, 51, 153))
         self._initializing = True
 
     class Color(Enum):
@@ -79,7 +76,6 @@ class Sign:
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             self._line1 = line1
             self._line2 = line2
-            self._color = color
 
     def get_button_state_tuple(self):
         color = list(Sign.Color)[self._button_state.get_single()]
