@@ -11,6 +11,8 @@ API_BASE = "https://api-v3.mbta.com"
 
 headers = {"x-api-key": API_KEY, "accept": "text/event-stream"}
 
+DEBUG = False
+
 # MBTA Stuff
 
 
@@ -69,6 +71,8 @@ while True:
         continue
     # filter out keep-alive new lines
     if line:
+        if DEBUG:
+            print("Event line: {}".format(line))
         if event_type_line:
             type_str = line.split(" ")[-1]
             # filter out keep-alive events

@@ -41,7 +41,7 @@ class Sign:
         options.rows = 16
         options.cols = 96
         options.brightness = 30
-        options.hardware_mapping = "regular"
+        options.hardware_mapping = "adafruit-hat"
         self.matrix = RGBMatrix(options=options)
         self.canvas = self.matrix.CreateFrameCanvas()
         self.font = graphics.Font()

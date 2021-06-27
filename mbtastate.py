@@ -33,12 +33,13 @@ class MBTAState:
         for pred in json_data:
             stop_id = str(pred['relationships']['stop']['data']['id'])
             direction_id = str(pred['attributes']['direction_id'])
-            if [stop_id, direction_id] in PREDICTIONS_TO_WATCH:
+            arrival_time = self.get_time(pred)
+            if arrival_time is not None and [stop_id, direction_id] in PREDICTIONS_TO_WATCH:
                 p = Prediction(
                     pred['id'],
                     pred['relationships']['route']['data']['id'],
                     pred['attributes']['direction_id'],
-                    pred['attributes']['arrival_time']
+                    arrival_time
                 )
                 preds.append(p)
             else:
@@ -60,12 +61,13 @@ class MBTAState:
         pred = parse_line(event.get_data())
         stop_id = str(pred['relationships']['stop']['data']['id'])
         direction_id = str(pred['attributes']['direction_id'])
-        if [stop_id, direction_id] in PREDICTIONS_TO_WATCH:
+        arrival_time = self.get_time(pred)
+        if arrival_time is not None and [stop_id, direction_id] in PREDICTIONS_TO_WATCH:
             p = Prediction(
                 pred['id'],
                 pred['relationships']['route']['data']['id'],
                 pred['attributes']['direction_id'],
-                pred['attributes']['arrival_time']
+                arrival_time
             )
             p.add_to_redis(self._r)
             self.publish_update(p.get_route_list_name())
@@ -79,7 +81,9 @@ class MBTAState:
         pred = parse_line(event.get_data())
         p = Prediction.from_redis(self._r, pred['id'])
         if p:
-            p.update_arrival_time(pred['attributes']['arrival_time'])
+            p.update_arrival_time(
+                    pred['attributes']['arrival_time'] or
+                    pred['attributes']['departure_time'])
             p.add_to_redis(self._r)
             self.publish_update(p.get_route_list_name())
             if DEBUG:
@@ -102,6 +106,9 @@ class MBTAState:
 
     def publish_update(self, r_l_name):
         self._r.publish(UPDATE_KEY, r_l_name)
+
+    def get_time(self, pred):
+        return pred["attributes"]["arrival_time"] or pred["attributes"]["departure_time"]
 
     def to_string(self, now=datetime.now(tzutc())):
         s = ""

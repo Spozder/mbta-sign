@@ -24,7 +24,8 @@ class Prediction:
         return self._arrival_time < other._arrival_time
 
     def update_arrival_time(self, new_time):
-        self._arrival_time = dateutil.parser.parse(new_time)
+        if new_time is not None:
+            self._arrival_time = dateutil.parser.parse(new_time)
 
     def get_arrival_time(self):
         return self._arrival_time
