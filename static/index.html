@@ -1,0 +1,177 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>A Basic HTML5 Template</title>
+  <meta name="description" content="A simple HTML5 Template for new projects.">
+  <meta name="author" content="SitePoint">
+
+  <meta property="og:title" content="A Basic HTML5 Template">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.sitepoint.com/a-basic-html5-template/">
+  <meta property="og:description" content="A simple HTML5 Template for new projects.">
+  <meta property="og:image" content="image.png">
+
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <style>
+    .rows-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    .line-container {
+      display: flex;
+      justify-content: space-around;
+    }
+    .direction-container {
+      display: flex;
+      flex-direction: column;
+    }
+    .direction-spacer {
+      width: 3rem;
+    }
+  </style>
+</head>
+
+<body>
+  <script type="module" src="./modules/timetable_row.js"></script>
+
+  <button id="refresh">Refresh!</button>
+  <button id="single-btn">Single</button>
+  <button id="double-btn">Double</button>
+
+  <div class="rows-container">
+    <h3>Orange Line!</h3>
+    <div class="line-container">
+      <div id="Orange-0-container" class="direction-container">
+        <h4>Inbound (Oak Grove)</h4>
+      </div>
+      <div class="direction-spacer"></div>
+      <div id="Orange-1-container" class="direction-container">
+        <h4>Outbound (Forest Hills)</h4>
+      </div>
+    </div>
+    <h3>Red Line!</h3>
+    <div class="line-container">
+      <div id="Red-0-container" class="direction-container">
+        <h4>Inbound (Alewife)</h4>
+      </div>
+      <div class="direction-spacer"></div>
+      <div id="Red-1-container" class="direction-container">
+        <h4>Outbound (Ashmont/Braintree)</h4>
+      </div>
+    </div>
+    <h3>Green Line!</h3>
+    <div class="line-container">
+      <div id="Green-E-0-container" class="direction-container">
+        <h4>Inbound (Lechmere)</h4>
+      </div>
+      <div class="direction-spacer"></div>
+      <div id="Green-E-1-container" class="direction-container">
+        <h4>Outbound (Heath St.)</h4>
+      </div>
+    </div>
+
+    <form action="#" id="custom-text-form">
+      <label for="custom-text-input">Submit text for sign:</label>
+      <input type="text" name="custom-text-input" />
+      <button type="submit">Submit!</button>
+    </form>
+  </div>
+
+  <script>
+    const createArrival = (id, line, time) => ({
+      id,
+      line,
+      time
+    });
+
+    function arrivalToTimetableRow(arrival) {
+      let new_row = document.createElement('timetable-row');
+      new_row.setAttribute('id', `row-${arrival.id}`);
+      new_row.setAttribute('line', arrival.line);
+      new_row.setAttribute('time', arrival.time);
+      return new_row;
+    }
+
+    function makeArrivals(predictionsData) {
+      return Object.values(predictionsData).flat().map((data) => {
+        const arrival = createArrival(
+          data["pred_id"],
+          `${data["route_name"]}-${data["direction"]}`,
+          Date.parse(data["arrival_time"])
+        );
+        console.log(arrival);
+        return arrival;
+      });
+    }
+
+    function refreshTimetableRows(arrivals) {
+      arrivals.forEach((arrival) => {
+        let existingRow = document.getElementById(`row-${arrival.id}`);
+        if (existingRow) {
+          // Row already exists
+          existingRow.setAttribute('time', arrival.time);
+        } else {
+          // Row needs to be created
+          let line_container = document.getElementById(`${arrival.line}-container`);
+          line_container.appendChild(arrivalToTimetableRow(arrival));
+        }
+      });
+
+      const ids = arrivals.map((arrival) => `row-${arrival.id}`);
+
+      document.querySelectorAll('timetable-row').forEach((row) => {
+        if (!ids.includes(row.getAttribute('id'))) {
+          row.remove();
+        }
+      });
+    }
+
+    const refreshData = () => {
+      fetch("/api/lines")
+        .then(response => response.json())
+        .then(data => refreshTimetableRows(makeArrivals(data)));
+    }
+
+    document.getElementById('refresh').addEventListener('click', refreshData);
+
+    document.getElementById("single-btn").addEventListener('click', () => {
+      fetch('/api/button/single', {
+        method: 'post'
+      });
+    });
+
+    document.getElementById("double-btn").addEventListener('click', () => {
+      fetch('/api/button/double', {
+        method: 'post'
+      });
+    });
+
+    document.getElementById("custom-text-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      return fetch("http://3.22.80.79/push", {
+        method: 'post',
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          text: new FormData(e.target).get("custom-text-input")
+        })
+      }).then(() => e.target.reset());
+    })
+
+    window.addEventListener("load", refreshData);
+  </script>
+</body>
+
+</html>
