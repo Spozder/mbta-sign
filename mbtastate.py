@@ -15,7 +15,17 @@ PREDICTIONS_TO_WATCH = [
     ['70200', '1'],
     ['70199', '0'],
     ['70080', '1'],
-    ['70079', '0']
+    ['70079', '0'],
+    ['70042', '1'],
+    ['70041', '0'],
+    ['74611', '0']
+]
+
+LINES_TO_WATCH = [
+    "Red",
+    "Orange",
+    "Green-E",
+    "Blue"
 ]
 
 
@@ -37,7 +47,7 @@ class MBTAState:
             if arrival_time is not None and [stop_id, direction_id] in PREDICTIONS_TO_WATCH:
                 p = Prediction(
                     pred['id'],
-                    pred['relationships']['route']['data']['id'],
+                    str(pred['relationships']['route']['data']['id']),
                     pred['attributes']['direction_id'],
                     arrival_time
                 )
@@ -65,7 +75,7 @@ class MBTAState:
         if arrival_time is not None and [stop_id, direction_id] in PREDICTIONS_TO_WATCH:
             p = Prediction(
                 pred['id'],
-                pred['relationships']['route']['data']['id'],
+                str(pred['relationships']['route']['data']['id']),
                 pred['attributes']['direction_id'],
                 arrival_time
             )
@@ -146,6 +156,16 @@ class MBTAState:
                 preds
             )
         )[:2]
+
+    def get_all_line_details(self, now=datetime.now(tzutc())):
+        predictions = {}
+        for line in LINES_TO_WATCH:
+            for dir_str in ["1", "0"]:
+                predictions[line + "_" + dir_str] = list(map(
+                    lambda p: p.to_dict(),
+                    self.get_next_two_predictions(line, dir_str, now)
+                ))
+        return predictions
 
     def acquire_lock(self):
         return self._r.lock(MBTA_LOCK_KEY)

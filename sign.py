@@ -3,6 +3,7 @@ import time
 from dateutil.tz import tzutc
 from datetime import datetime
 import logging
+import textwrap
 from enum import Enum
 from rgbmatrix import RGBMatrix, RGBMatrixOptions, graphics
 from mbtastate import MBTAState
@@ -11,6 +12,7 @@ from redis import Redis
 
 UPDATE_KEY = "update"
 BUTTON_KEY = "button"
+CUSTOM_TEXT_KEY = "custom"
 
 DEBUG = False
 
@@ -40,7 +42,7 @@ class Sign:
         # Setup sign options
         options.rows = 16
         options.cols = 96
-        options.brightness = 30
+        options.brightness = 35
         options.hardware_mapping = "adafruit-hat"
         self.matrix = RGBMatrix(options=options)
         self.canvas = self.matrix.CreateFrameCanvas()
@@ -54,17 +56,21 @@ class Sign:
         # Subscribe to channel
         self._pubsub = self._r.pubsub()
         self._pubsub.subscribe(UPDATE_KEY)
+        self._pubsub.subscribe(CUSTOM_TEXT_KEY)
 
         self._line1 = ""
         self._line2 = ""
+        self._color = graphics.Color(102, 51, 153)
 
-        self.set_text("Now booting up", "Pls hold", graphics.Color(102, 51, 153))
+        self.set_text("Now booting up", "Pls hold", self._color)
         self._initializing = True
 
     class Color(Enum):
         RED = {"mbta_string": "Red", "sign_color": graphics.Color(200, 0, 0)}
         ORANGE = {"mbta_string": "Orange", "sign_color": graphics.Color(237, 139, 0)}
         GREEN = {"mbta_string": "Green-E", "sign_color": graphics.Color(0, 204, 0)}
+        BLUE = {"mbta_string": "Blue", "sign_color": graphics.Color(0, 0, 200)}
+        SILVER = {"mbta_string": "Silver", "sign_color": graphics.Color(128,128,128)}
 
     def set_text(self, line1, line2, color):
         if DEBUG:
@@ -76,10 +82,13 @@ class Sign:
             self.canvas = self.matrix.SwapOnVSync(self.canvas)
             self._line1 = line1
             self._line2 = line2
+            self._color = color
 
     def get_button_state_tuple(self):
         color = list(Sign.Color)[self._button_state.get_single()]
         direction = "0" if self._button_state.get_double() else "1"
+        if color == Sign.Color.SILVER:
+            direction = "0"
         return color, direction
 
     def get_button_state_string(self):
@@ -89,7 +98,7 @@ class Sign:
 
     def handle_next_update(self):
         m = self._pubsub.get_message(timeout=1)
-        if m:
+        if m and not m["type"] == "subscribe":
             if DEBUG:
                 print(m)
             if m["data"] == BUTTON_KEY:
@@ -115,6 +124,9 @@ class Sign:
                     if len(predictions) > 1:
                         line2 = predictions[1].to_short_string(now)
                 self.set_text(line1, line2, color.value["sign_color"])
+            if m["channel"] == CUSTOM_TEXT_KEY:
+                line1, line2, *rest = (textwrap.wrap(m["data"], 19) + [''])
+                self.set_text(line1, line2, self._color)
 
     def unsubscribe(self):
         self._pubsub.unsubscribe()

@@ -10,6 +10,8 @@ ARRIVAL_TIME = "arrival_time"
 
 
 def create_route_list_name(route, direction):
+    if str(route) in ["741", "742", "743", "746"]:
+        return "Silver" + str(direction)
     return str(route) + str(direction)
 
 
@@ -54,6 +56,16 @@ class Prediction:
             destination = "Oak Grove" if self._direction == 1 else "Forest Hills"
         elif(self._route == "Red"):
             destination = "Alewife" if self._direction == 1 else "Ashmont/BT"
+        elif(self._route == "741"):
+            destination = "South Statn" if self._direction == 1 else "Boston Logan"
+        elif(self._route == "742"):
+            destination = "South Statn" if self._direction == 1 else "Drydock Ave"
+        elif(self._route == "743"):
+            destination = "South Statn" if self._direction == 1 else "Chelsea"
+        elif(self._route == "746"):
+            destination = "South Statn" if self._direction == 1 else "SL Way"
+        elif(self._route == "Blue"):
+            destination = "Wonderland" if self._direction == 1 else "Bowdoin"
         else:
             destination = "Lechmere" if self._direction == 1 else "Heath St"
         return "{} {} min".format(

@@ -4,7 +4,7 @@ HOLD_KEY = "button_hold"
 
 UPDATE_KEY = "update"
 
-MAX_SINGLE = 3
+MAX_SINGLE = 5
 
 
 class ButtonState:
