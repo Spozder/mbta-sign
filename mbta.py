@@ -1,6 +1,7 @@
 from mbtastate import MBTAState, PREDICTIONS_TO_WATCH
 import requests
 
+from json import loads
 import time
 import sys
 
@@ -44,16 +45,18 @@ class MBTAEvent:
         return self._type
 
     def get_data(self):
-        return self._data
+        if self._data:
+            return loads(self._data[self._data.index(" ") + 1 :])
+        return None
 
 
-stop_ids = set(map(lambda a: a[0], PREDICTIONS_TO_WATCH))
-direction_ids = set(map(lambda a: a[1], PREDICTIONS_TO_WATCH))
+stop_ids = list(map(lambda a: a[0], PREDICTIONS_TO_WATCH))
+direction_ids = list(map(lambda a: a[1], PREDICTIONS_TO_WATCH))
 
 state = MBTAState(
     Redis(host="127.0.0.1", port="6379", charset="utf-8", decode_responses=True)
 )
-pred_url = API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}".format(
+pred_url = API_BASE + "/predictions?filter[stop]={}&filter[direction_id]={}&include=trip".format(
     ",".join(stop_ids), ",".join(direction_ids)
 )
 print("Connecting to {}".format(pred_url))
