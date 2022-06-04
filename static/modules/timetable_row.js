@@ -27,7 +27,15 @@ const LINE_IMAGES = {
   "Red-0": "red-1993.png",
   "Red-1": "red-1993.png",
   "Green-E-0": "green-2018.png",
-  "Green-E-1": "green-2018.png"
+  "Green-E-1": "green-2018.png",
+  "Green-D-0": "green-2018.png",
+  "Green-D-1": "green-2018.png",
+  "Green-C-0": "green-2018.png",
+  "Green-C-1": "green-2018.png",
+  "Green-B-0": "green-2018.png",
+  "Green-B-1": "green-2018.png",
+  "Blue-0": "blue-2008.png",
+  "Blue-1": "blue-2008.png",
 };
 
 export class TimetableRow extends HTMLElement {

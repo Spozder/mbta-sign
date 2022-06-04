@@ -68,9 +68,9 @@ class Sign:
     class Color(Enum):
         RED = {"mbta_string": "Red", "sign_color": graphics.Color(200, 0, 0)}
         ORANGE = {"mbta_string": "Orange", "sign_color": graphics.Color(237, 139, 0)}
-        GREEN = {"mbta_string": "Green-E", "sign_color": graphics.Color(0, 204, 0)}
+        GREEN = {"mbta_string": "Green", "sign_color": graphics.Color(0, 204, 0)}
         BLUE = {"mbta_string": "Blue", "sign_color": graphics.Color(0, 0, 200)}
-        SILVER = {"mbta_string": "Silver", "sign_color": graphics.Color(128,128,128)}
+        SILVER = {"mbta_string": "Silver", "sign_color": graphics.Color(128, 128, 128)}
 
     def set_text(self, line1, line2, color):
         if DEBUG:
@@ -103,7 +103,12 @@ class Sign:
                 print(m)
             if m["data"] == BUTTON_KEY:
                 self._button_state.refresh()
-            if self._initializing or m["data"] == BUTTON_KEY or m["data"] == self.get_button_state_string() or self._button_state.get_held():
+            if (
+                self._initializing
+                or m["data"] == BUTTON_KEY
+                or m["data"] == self.get_button_state_string()
+                or self._button_state.get_held()
+            ):
                 self._initializing = False
                 if DEBUG:
                     print("Update Occuring")
@@ -125,7 +130,7 @@ class Sign:
                         line2 = predictions[1].to_short_string(now)
                 self.set_text(line1, line2, color.value["sign_color"])
             if m["channel"] == CUSTOM_TEXT_KEY:
-                line1, line2, *rest = (textwrap.wrap(m["data"], 19) + [''])
+                line1, line2, *rest = textwrap.wrap(m["data"], 19) + [""]
                 self.set_text(line1, line2, self._color)
 
     def unsubscribe(self):
