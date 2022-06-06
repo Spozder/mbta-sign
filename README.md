@@ -1,6 +1,6 @@
 # A Custom MBTA Arrivals Sign
 
-<img src="static/tsign_compressed.jpg" alt="The T Sign" width="800px" height="450px">
+<img src="static/tsign_compressed.jpg" alt="The T Sign" width="800px">
 
 Because I used to commute via the T every day (and I love the T), I wanted a way to tell when the T was arriving at my nearby stop at a glance. To that end, I created a RGB LED sign, powered by a [Rapsberry Pi](https://www.raspberrypi.org/), that constantly displays the next two arrival predictions at specific stops near me. It was also extended to use a [Flic Button](https://flic.io/) for switching lines/directions to show.
 
